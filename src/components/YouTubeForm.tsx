@@ -11,6 +11,8 @@ type YouTubeFormProps = {
   };
   phoneNumbers: string[];
   phNumbers: { number: string }[];
+  age: number;
+  dob: Date;
 };
 
 export default function YouTubeForm() {
@@ -31,6 +33,8 @@ export default function YouTubeForm() {
       },
       phoneNumbers: ["", ""],
       phNumbers: [{ number: "" }],
+      age: 0,
+      dob: new Date(),
     },
   });
 
@@ -165,6 +169,31 @@ export default function YouTubeForm() {
               Append
             </button>
           )}
+        </div>
+
+        <div>
+          <label htmlFor="age">Age</label>
+          <input
+            type="number"
+            id="age"
+            min={0}
+            {...register("age", {
+              required: "Age is required",
+              valueAsNumber: true,
+            })}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="dob">Date of birth</label>
+          <input
+            type="date"
+            id="dob"
+            {...register("dob", {
+              required: "Date of birth is required",
+              valueAsDate: true,
+            })}
+          />
         </div>
 
         <button>Submit</button>
