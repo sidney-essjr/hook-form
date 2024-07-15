@@ -1,5 +1,5 @@
 import { DevTool } from "@hookform/devtools";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 
 type YouTubeFormProps = {
   username: string;
@@ -9,6 +9,8 @@ type YouTubeFormProps = {
     twitter: string;
     facebook: string;
   };
+  phoneNumbers: string[];
+  phNumbers: { number: string }[];
 };
 
 export default function YouTubeForm() {
@@ -27,7 +29,14 @@ export default function YouTubeForm() {
         twitter: "",
         facebook: "",
       },
+      phoneNumbers: ["", ""],
+      phNumbers: [{ number: "" }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: "phNumbers",
+    control,
   });
 
   const onSubmit = (data: YouTubeFormProps) => {
@@ -91,10 +100,72 @@ export default function YouTubeForm() {
         <p className="error">{errors.channel?.message}</p>
 
         <label htmlFor="twitter">Twitter</label>
-        <input type="text" id="twitter" {...register("social.twitter")} />
+        <input
+          type="text"
+          id="twitter"
+          {...register("social.twitter", {
+            required: "This field is required",
+          })}
+        />
+        <p className="error">{errors.social?.twitter?.message}</p>
 
         <label htmlFor="facebook">Facebook</label>
-        <input type="text" id="facebook" {...register("social.facebook")} />
+        <input
+          type="text"
+          id="facebook"
+          {...register("social.facebook", {
+            required: "This field is required",
+          })}
+        />
+        <p className="error">{errors.social?.facebook?.message}</p>
+
+        <label htmlFor="primary-phone">Primary phone number</label>
+        <input
+          type="text"
+          id="primary-phone"
+          {...register("phoneNumbers.0", {
+            required: "This field is required",
+          })}
+        />
+        <p className="error">
+          {errors.phoneNumbers && errors.phoneNumbers[0]?.message}
+        </p>
+
+        <label htmlFor="secondary-phone">Secondary phone number</label>
+        <input
+          type="text"
+          id="secondary-phone"
+          {...register("phoneNumbers.1", {
+            required: "This field is required",
+          })}
+        />
+        <p className="error">
+          {errors.phoneNumbers && errors.phoneNumbers[1]?.message}
+        </p>
+
+        <div className="form-control">
+          <label htmlFor="">Phone Numbers</label>
+          {fields.map((field, index) => (
+            <div key={field.id}>
+              <label htmlFor="phone">Phone</label>
+              <input
+                type="text"
+                id="phone"
+                {...register(`phNumbers.${index}.number` as const)}
+              />
+              {index > 0 && (
+                <button type="button" onClick={() => remove(index)}>
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          {fields[fields.length - 1].number !== "" && (
+            <button type="button" onClick={() => append({ number: "" })}>
+              Append
+            </button>
+          )}
+        </div>
 
         <button>Submit</button>
       </form>
