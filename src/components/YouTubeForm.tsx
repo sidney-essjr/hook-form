@@ -5,6 +5,10 @@ type YouTubeFormProps = {
   username: string;
   email: string;
   channel: string;
+  social: {
+    twitter: string;
+    facebook: string;
+  };
 };
 
 export default function YouTubeForm() {
@@ -14,7 +18,17 @@ export default function YouTubeForm() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<YouTubeFormProps>();
+  } = useForm<YouTubeFormProps>({
+    defaultValues: {
+      username: "Batman",
+      email: "",
+      channel: "",
+      social: {
+        twitter: "",
+        facebook: "",
+      },
+    },
+  });
 
   const onSubmit = (data: YouTubeFormProps) => {
     console.log("Form submitted", data);
@@ -75,6 +89,12 @@ export default function YouTubeForm() {
           })}
         />
         <p className="error">{errors.channel?.message}</p>
+
+        <label htmlFor="twitter">Twitter</label>
+        <input type="text" id="twitter" {...register("social.twitter")} />
+
+        <label htmlFor="facebook">Facebook</label>
+        <input type="text" id="facebook" {...register("social.facebook")} />
 
         <button>Submit</button>
       </form>
