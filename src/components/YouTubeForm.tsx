@@ -1,5 +1,4 @@
 import { DevTool } from "@hookform/devtools";
-import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
 type YouTubeFormProps = {
@@ -25,6 +24,7 @@ export default function YouTubeForm() {
     handleSubmit,
     reset,
     watch,
+    getValues,
     formState: { errors },
   } = useForm<YouTubeFormProps>({
     defaultValues: {
@@ -42,15 +42,15 @@ export default function YouTubeForm() {
     },
   });
 
-  const [watchedField, setWatchedField] = useState<
-    | (
-        | {
-            number?: string | undefined;
-          }
-        | undefined
-      )[]
-    | undefined
-  >([]);
+  // const [watchedField, setWatchedField] = useState<
+  //   | (
+  //       | {
+  //           number?: string | undefined;
+  //         }
+  //       | undefined
+  //     )[]
+  //   | undefined
+  // >([]);
 
   renderCount = renderCount + 1 / 2;
 
@@ -64,15 +64,20 @@ export default function YouTubeForm() {
     reset();
   };
 
-  useEffect(() => {
-    const subs = watch((value) => {
-      setWatchedField(value.phNumbers);
-    });
+  function handleGetValues() {
+    console.log(getValues(["username", "age"]));
+  }
 
-    return () => subs.unsubscribe();
-  }, [watch]);
+  // Observer pattern utilizado para evitar novas renderizações desnecessarias
+  // useEffect(() => {
+  //   const subs = watch((value) => {
+  //     setWatchedField(value.phNumbers);
+  //   });
 
-  // const phNumberWatch = watch("phNumbers");
+  //   return () => subs.unsubscribe();
+  // },[watch]);
+
+  const phNumberWatch = watch("phNumbers");
 
   return (
     <div>
@@ -224,6 +229,9 @@ export default function YouTubeForm() {
         </div>
 
         <button>Submit</button>
+        <button type="button" onClick={handleGetValues}>
+          Get values
+        </button>
       </form>
       <DevTool control={control} />
     </div>
