@@ -1,4 +1,5 @@
 import { DevTool } from "@hookform/devtools";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
 type YouTubeFormProps = {
@@ -15,12 +16,15 @@ type YouTubeFormProps = {
   dob: Date;
 };
 
+let renderCount = 0;
+
 export default function YouTubeForm() {
   const {
     register,
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<YouTubeFormProps>({
     defaultValues: {
@@ -38,6 +42,18 @@ export default function YouTubeForm() {
     },
   });
 
+  const [watchedField, setWatchedField] = useState<
+    | (
+        | {
+            number?: string | undefined;
+          }
+        | undefined
+      )[]
+    | undefined
+  >([]);
+
+  renderCount = renderCount + 1 / 2;
+
   const { fields, append, remove } = useFieldArray({
     name: "phNumbers",
     control,
@@ -48,9 +64,20 @@ export default function YouTubeForm() {
     reset();
   };
 
+  useEffect(() => {
+    const subs = watch((value) => {
+      setWatchedField(value.phNumbers);
+    });
+
+    return () => subs.unsubscribe();
+  }, [watch]);
+
+  // const phNumberWatch = watch("phNumbers");
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <h1>You Tube Form {renderCount}</h1>
         <label htmlFor="username">Username</label>
         <input
           type="text"
@@ -164,7 +191,7 @@ export default function YouTubeForm() {
               )}
             </div>
           ))}
-          {fields[fields.length - 1].number !== "" && (
+          {phNumberWatch[fields.length - 1].number !== "" && (
             <button type="button" onClick={() => append({ number: "" })}>
               Append
             </button>
@@ -187,7 +214,7 @@ export default function YouTubeForm() {
         <div>
           <label htmlFor="dob">Date of birth</label>
           <input
-            type="date"
+            type="datetime-local"
             id="dob"
             {...register("dob", {
               required: "Date of birth is required",
