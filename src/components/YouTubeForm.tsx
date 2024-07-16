@@ -25,6 +25,7 @@ export default function YouTubeForm() {
     reset,
     watch,
     getValues,
+    setValue,
     formState: { errors },
   } = useForm<YouTubeFormProps>({
     defaultValues: {
@@ -66,6 +67,14 @@ export default function YouTubeForm() {
 
   function handleGetValues() {
     console.log(getValues(["username", "age"]));
+  }
+
+  function handleSetValue() {
+    setValue("username", "", {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   }
 
   // Observer pattern utilizado para evitar novas renderizações desnecessarias
@@ -231,6 +240,9 @@ export default function YouTubeForm() {
         <button>Submit</button>
         <button type="button" onClick={handleGetValues}>
           Get values
+        </button>
+        <button type="button" onClick={handleSetValue}>
+          Set value
         </button>
       </form>
       <DevTool control={control} />
